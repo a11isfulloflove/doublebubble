@@ -1,0 +1,322 @@
+.header {
+    background: #333;
+    color: #FFF;
+    display: flex
+}
+
+.header .main-text-container {
+    font-size: 24px;
+    padding: 20px;
+    margin-left: 25px
+}
+
+.header .main-text-container .header-main-text {
+    color: #FFF;
+    text-decoration: none
+}
+
+.url-input {
+    float: right;
+}
+
+.url-input-button {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    margin-left: auto
+}
+
+.submit-url-button {
+    outline: 0;
+    background: #444;
+    color: #fff;
+    box-sizing: border-box;
+    font-size: 13px;
+
+    padding-bottom: 3px;
+    margin: 20px;
+    margin-left: 10px;
+    padding: 0;
+    width: 50px;
+    border: 0;
+    border-radius: 3px;
+}
+
+.header .url-input-field {
+    outline: 0;
+    background: #333;
+    box-sizing: border-box;
+    font-size: 13px;
+    padding-bottom: 3px;
+    margin: 20px;
+    margin-right: 5px;
+    padding-left: 10px;
+    width: 300px;
+    border: 1px solid;
+    border-color: #c6c6c6;
+    border-radius: 3px;
+    color: #fff;
+}
+
+
+.header .submit-url-button:hover {
+    background: #2a2a2a;
+    cursor: pointer;
+}
+
+.video-grid {
+    display: grid;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 2fr));
+    gap: 20px;
+    
+}
+
+@media (min-width: 900px) {
+    .video-grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* три карточки на десктопе */
+    }
+}
+
+.video-link[data-status="queued"] .thumbnail {
+    filter: grayscale(60%) brightness(70%);
+    transition: filter 0.2s ease;
+}
+
+.video-link[data-status="queued"] .thumbnail-wrapper::after {
+    content: "Video is queued...";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: inherit;
+}
+
+.video-link[data-status="processing"] .thumbnail {
+    filter: brightness(50%);
+    transition: filter 0.2s ease;
+}
+
+.video-link[data-status="processing"] .thumbnail-wrapper::after {
+    content: "Video is processing...";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: inherit;
+}
+.video-link[data-status="processing"] .thumbnail-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+
+.video-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    background: #eaeaea;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.video-link {
+    text-decoration: none;
+    color: inherit; 
+    display: block; 
+}
+
+.thumbnail-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    
+}
+
+.thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.video-title {
+    padding: 0px 10px 0px 10px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    text-decoration: none;
+
+}
+
+/* Кнопка удаления */
+.delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: pink;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.video-card:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    background: pink
+}
+
+/* Модальное окно */
+.delete-confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.delete-confirmation-container {
+    background: white;
+    padding: 20px 25px;
+    border-radius: 6px;
+    max-width: 320px;
+    text-align: center;
+    animation: popIn 0.25s ease;
+}
+
+.delete-confirmation-container .delete-confirmation-header {
+    color: #555;
+    margin-bottom: 8px;
+    margin-top: 1px;
+}
+
+.delete-confirmation-container .delete-confirmation-thumbnail {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 6px;
+
+}
+
+.delete-confirmation-container .delete-confirmation-title {
+    color: #555;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+.delete-confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.delete-confirmation-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #ddd;
+    transition: background 0.2s ease;
+}
+
+.delete-confirmation-buttons button:hover {
+    background: #ccc;
+}
+
+.delete-confirmation-buttons .confirm {
+    background: pink;
+    color: white;
+}
+
+.delete-confirmation-buttons .confirm:hover {
+    background: rgb(255, 157, 174);
+}
+
+/* Анимация появления модального окна */
+@keyframes popIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.error-showing {
+    color: #2a2a2a;
+    font-size: xx-large;
+}
+
+.error-showing {
+  background-color: #ffe5e5;
+  color: #b30000;
+  border: 1px solid #ffb3b3;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
