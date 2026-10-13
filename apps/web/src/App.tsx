@@ -1,6 +1,6 @@
 import Layout from './layouts/layout'
-import ListOfVideos from './components/home/listOfVideos';
-import VideoWithSubs from './components/videoPlayer/videoWithSubs';
+import ListOfVideos from './components/home/ListOfVideos';
+import VideoWithSubs from './components/videoPlayer/VideoWithSubs';
 import NoPage from './components/errorPage/nopage'
 
 import ReactDOM from "react-dom/client";

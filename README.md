@@ -1,69 +1,48 @@
-# React + TypeScript + Vite
+# 🫧double더블🫧버블bubble🫧
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dual-subtitle tool for Korean YouTube videos: downloads audio, transcribes it with Whisper (Korean), translates each segment to English with MarianMT, and plays the video with both subtitle tracks side by side.
 
-Currently, two official plugins are available:
+## Monorepo layout
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+doublesub/
+├── apps/
+│   ├── web/          # React 19 + Vite + TypeScript frontend
+│   └── api/          # FastAPI backend (Whisper + MarianMT + MongoDB)
+├── packages/
+│   └── shared/       # @doublesub/shared — shared TS types + API client
+├── package.json      # npm workspaces root
+└── .gitignore
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Web
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+The dev server proxies `/whisper/*` requests to the API (see `apps/web/vite.config.ts`).
+
+### API
+
+```bash
+cd apps/api
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+cp .env.example .env
+python3 -m uvicorn app.main:app --reload
+```
+
+Requires a running MongoDB (default `mongodb://localhost:27017/`). See `apps/api/README.md` for details.
+
+## Scripts
+
+| Command         | Description                     |
+| --------------- | ------------------------------- |
+| `npm run dev`   | Start the web dev server        |
+| `npm run build` | Type-check and build the web app |
+| `npm run lint`  | Lint the web app                |
