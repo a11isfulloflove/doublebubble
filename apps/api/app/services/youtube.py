@@ -5,6 +5,10 @@ from pytubefix import YouTube
 from pytubefix.cli import on_progress
 from pytubefix.exceptions import VideoUnavailable
 
+from .. import browser_tls
+
+browser_tls.apply()
+
 
 def slug_title(text: str) -> str:
     return "-".join(text.split())
