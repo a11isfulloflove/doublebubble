@@ -46,3 +46,7 @@ Requires a running MongoDB (default `mongodb://localhost:27017/`). See `apps/api
 | `npm run dev`   | Start the web dev server        |
 | `npm run build` | Type-check and build the web app |
 | `npm run lint`  | Lint the web app                |
+
+## Troubleshooting
+
+**Video doesn't render (blank player area):** Vite's dependency cache (`apps/web/node_modules/.vite`) can go stale after dependency changes. Run `npm run dev:fresh` to clear it and restart, then hard-refresh the browser (Cmd+Shift+R).

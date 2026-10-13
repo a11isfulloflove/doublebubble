@@ -8,6 +8,8 @@
   ],
   "scripts": {
     "dev": "npm run dev -w apps/web",
+    "dev:fresh": "npm run clean:vite && npm run dev",
+    "clean:vite": "rm -rf apps/web/node_modules/.vite",
     "build": "npm run build -w apps/web",
     "lint": "npm run lint -w apps/web",
     "preview": "npm run preview -w apps/web"
