@@ -2,12 +2,13 @@ import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Form, HTTPException
+from pytubefix.exceptions import VideoUnavailable
 
 from .db import collection
 from .services.youtube import get_video_meta
 from .worker import queue_loop
 
-queue_task: asyncio.Task | None = None
+queue_task = None
 
 
 @asynccontextmanager
@@ -35,7 +36,13 @@ async def transcribe(link: str = Form(...)):
         if existing.get("status") == "done":
             return {"status": "done", "message": "This video already exists. Please!! check the feed"}
 
-    doc = {"link": link, "status": "queued", **get_video_meta(link)}
+    try:
+        meta = get_video_meta(link)
+    except VideoUnavailable:
+        print(f"❌ Video is unavailable: {link}")
+        raise HTTPException(status_code=404, detail="This YouTube video is unavailable.")
+
+    doc = {"link": link, "status": "queued", **meta}
 
     await collection.insert_one(doc)
     return {"status": "queued"}
