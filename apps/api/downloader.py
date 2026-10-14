@@ -59,11 +59,11 @@ def run_with_retries(fn, *args):
     for attempt in range(1, ATTEMPTS + 1):
         try:
             return fn(*args)
-        except VideoUnavailable:
-            raise
         except Exception as e:
             last_error = e
-            print(f"attempt {attempt} failed: {type(e).__name__}", file=sys.stderr, flush=True)
+            print(
+                f"attempt {attempt} failed: {type(e).__name__}", file=sys.stderr, flush=True
+            )
             time.sleep(RETRY_DELAY)
     raise last_error
 
