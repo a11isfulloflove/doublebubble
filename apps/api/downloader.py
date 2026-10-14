@@ -23,8 +23,8 @@ from curl_cffi import requests as browser_requests
 from pytubefix import YouTube
 from pytubefix.exceptions import VideoUnavailable
 
-ATTEMPTS = 4
-RETRY_DELAY = 2
+ATTEMPTS = 8
+RETRY_DELAY = 5
 
 
 def slug_title(text):

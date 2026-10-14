@@ -19,7 +19,7 @@ def _run_downloader(*args, timeout):
         timeout=timeout,
     )
     if proc.returncode == 2:
-        raise VideoUnavailable(video_id=link)
+        raise VideoUnavailable(video_id=args[1])
     if proc.returncode != 0:
         detail = (proc.stderr or "").strip().splitlines()
         raise RuntimeError(detail[-1] if detail else f"downloader exited {proc.returncode}")
