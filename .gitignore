@@ -32,3 +32,4 @@ downloads
 *.njsproj
 *.sln
 *.sw?
+downloader.log
