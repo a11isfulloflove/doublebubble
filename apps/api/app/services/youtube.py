@@ -1,14 +1,13 @@
 import json
 import os
 import subprocess
+from pathlib import Path
 
 from pytubefix.exceptions import VideoUnavailable
 
 from ..config import DOWNLOADER_PYTHON
 
-_DOWNLOADER = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "downloader.py"
-)
+_DOWNLOADER = str(Path(__file__).resolve().parents[2] / "downloader.py")
 
 
 def _run_downloader(*args, timeout):

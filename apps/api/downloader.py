@@ -54,13 +54,26 @@ def fetch_download(link, output_dir):
     return {"path": path, "title": yt.title}
 
 
+def _log(msg):
+    log_path = Path(__file__).resolve().parent / "downloader.log"
+    try:
+        with open(log_path, "a") as f:
+            f.write(f"{time.strftime('%H:%M:%S')} {msg}\n")
+    except OSError:
+        pass
+
+
 def run_with_retries(fn, *args):
     last_error = None
     for attempt in range(1, ATTEMPTS + 1):
         try:
-            return fn(*args)
+            result = fn(*args)
+            if attempt > 1:
+                _log(f"succeeded on attempt {attempt}")
+            return result
         except Exception as e:
             last_error = e
+            _log(f"attempt {attempt} failed: {type(e).__name__}: {str(e)[:120]}")
             print(
                 f"attempt {attempt} failed: {type(e).__name__}", file=sys.stderr, flush=True
             )
