@@ -1,13 +1,31 @@
-import base64
+import json
+import os
+import subprocess
 
-import requests
-from pytubefix import YouTube
-from pytubefix.cli import on_progress
 from pytubefix.exceptions import VideoUnavailable
 
-from .. import browser_tls
+from ..config import DOWNLOADER_PYTHON
 
-browser_tls.apply()
+_DOWNLOADER = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "downloader.py"
+)
+
+
+def _run_downloader(*args, timeout):
+    proc = subprocess.run(
+        [DOWNLOADER_PYTHON, _DOWNLOADER, *args],
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+    )
+    if proc.returncode == 2:
+        raise VideoUnavailable()
+    if proc.returncode != 0:
+        detail = (proc.stderr or "").strip().splitlines()
+        raise RuntimeError(detail[-1] if detail else f"downloader exited {proc.returncode}")
+
+    lines = [line for line in proc.stdout.strip().splitlines() if line.strip()]
+    return json.loads(lines[-1])
 
 
 def slug_title(text: str) -> str:
@@ -15,23 +33,8 @@ def slug_title(text: str) -> str:
 
 
 def get_video_meta(link: str) -> dict:
-    try:
-        yt = YouTube(link, on_progress_callback=on_progress)
-    except VideoUnavailable:
-        raise
-
-    thumbnail_base64 = base64.b64encode(requests.get(yt.thumbnail_url).content).decode("utf-8")
-
-    return {
-        "title": yt.title,
-        "slug": slug_title(yt.title),
-        "thumbnail_base64": thumbnail_base64,
-    }
+    return _run_downloader("meta", link, timeout=180)
 
 
 def download_audio(link: str, output_dir: str) -> str:
-    yt = YouTube(link)
-    return yt.streams.get_audio_only().download(
-        output_path=output_dir,
-        filename=yt.title + ".m4a",
-    )
+    return _run_downloader("download", link, output_dir, timeout=900)["path"]

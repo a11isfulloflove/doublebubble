@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+_API_DIR = Path(__file__).resolve().parent.parent
+
 
 def _load_dotenv(path: str = ".env") -> None:
     env_path = Path(__file__).resolve().parent.parent / path
@@ -26,5 +28,9 @@ WHISPER_MODEL = os.getenv("WHISPER_MODEL", "medium")
 WHISPER_LANGUAGE = os.getenv("WHISPER_LANGUAGE", "ko")
 
 TRANSLATION_MODEL = os.getenv("TRANSLATION_MODEL", "Helsinki-NLP/opus-mt-ko-en")
+
+DOWNLOADER_PYTHON = os.getenv(
+    "DOWNLOADER_PYTHON", str(_API_DIR / ".venv312" / "bin" / "python")
+)
 
 QUEUE_POLL_INTERVAL = float(os.getenv("QUEUE_POLL_INTERVAL", "5"))
