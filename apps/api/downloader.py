@@ -23,8 +23,8 @@ from curl_cffi import requests as browser_requests
 from pytubefix import YouTube
 from pytubefix.exceptions import VideoUnavailable
 
-ATTEMPTS = 8
-RETRY_DELAY = 5
+ATTEMPTS = 10
+RETRY_DELAYS = [3, 5, 8, 12, 18, 25, 30, 30, 30]
 
 
 def slug_title(text):
@@ -77,7 +77,8 @@ def run_with_retries(fn, *args):
             print(
                 f"attempt {attempt} failed: {type(e).__name__}", file=sys.stderr, flush=True
             )
-            time.sleep(RETRY_DELAY)
+            delay = RETRY_DELAYS[min(attempt - 1, len(RETRY_DELAYS) - 1)]
+            time.sleep(delay)
     raise last_error
 
 

@@ -1,17 +1,12 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Form, HTTPException
-from pytubefix.exceptions import VideoUnavailable
 
 from .db import collection
-from .services.youtube import get_video_meta
 from .worker import queue_loop
 
 queue_task = None
-meta_executor = ThreadPoolExecutor(max_workers=1)
-META_TIMEOUT = 90
 
 
 @asynccontextmanager
@@ -39,23 +34,13 @@ async def transcribe(link: str = Form(...)):
         if existing.get("status") == "done":
             return {"status": "done", "message": "This video already exists. Please!! check the feed"}
 
-    try:
-        loop = asyncio.get_running_loop()
-        meta = await asyncio.wait_for(
-            loop.run_in_executor(meta_executor, get_video_meta, link),
-            timeout=META_TIMEOUT,
-        )
-    except asyncio.TimeoutError:
-        print(f"⏱ YouTube is not responding: {link}")
-        raise HTTPException(status_code=504, detail="YouTube is not responding right now. Please try again in a few minutes.")
-    except VideoUnavailable:
-        print(f"❌ Video is unavailable: {link}")
-        raise HTTPException(status_code=404, detail="This YouTube video is unavailable.")
-    except Exception as e:
-        print(f"❌ Could not reach YouTube for {link}: {type(e).__name__}: {e}")
-        raise HTTPException(status_code=502, detail="Could not reach YouTube right now. Please try again in a few minutes.")
-
-    doc = {"link": link, "status": "queued", **meta}
+    doc = {
+        "link": link,
+        "title": "VIDEO IS LOADING...",
+        "slug": "",
+        "thumbnail_base64": "",
+        "status": "queued",
+    }
 
     await collection.insert_one(doc)
     return {"status": "queued"}

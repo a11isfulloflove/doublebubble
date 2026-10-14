@@ -9,14 +9,21 @@ from .config import DOWNLOAD_DIR, QUEUE_POLL_INTERVAL
 from .db import collection
 from .services.transcription import transcribe_file
 from .services.translation import translate_file
-from .services.youtube import download_audio
+from .services.youtube import download_audio, get_video_meta
 
 executor = ThreadPoolExecutor(max_workers=1)
 
 
 async def process_transcription(link: str):
+    meta = await asyncio.get_running_loop().run_in_executor(
+        executor, get_video_meta, link
+    )
+    await collection.update_one({"link": link}, {"$set": meta})
+
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    downloaded_path = download_audio(link, DOWNLOAD_DIR)
+    downloaded_path = await asyncio.get_running_loop().run_in_executor(
+        executor, download_audio, link, DOWNLOAD_DIR
+    )
 
     suffix = os.path.splitext(downloaded_path)[-1]
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:

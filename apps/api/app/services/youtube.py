@@ -32,7 +32,7 @@ def slug_title(text: str) -> str:
 
 
 def get_video_meta(link: str) -> dict:
-    return _run_downloader("meta", link, timeout=180)
+    return _run_downloader("meta", link, timeout=600)
 
 
 def download_audio(link: str, output_dir: str) -> str:

@@ -12,7 +12,7 @@ import socket
 from curl_cffi import requests as browser_requests
 
 IMPERSONATE = "chrome"
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIMEOUT = 12
 
 
 class _ResponseAdapter:
