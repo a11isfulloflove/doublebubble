@@ -2,14 +2,15 @@ import "./VideoWithSubs.css";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
-import { loadSingleVideo } from "../../api/generateNewSubtitles";
+import { loadSingleVideo } from "@doublesub/shared";
+import type { Segment, VideoDetail } from "@doublesub/shared";
 
 export default function VideoWithSubs() {
     const { slug } = useParams();
-    const [videoToShow, setVideoToShow] = useState<{link: string, title: string, status: string} | null>(null);
-    const [segments, setSegments] = useState<{text: string; tr: string; start: number, end: number}[]>([]);
+    const [videoToShow, setVideoToShow] = useState<Pick<VideoDetail, "link" | "title" | "status"> | null>(null);
+    const [segments, setSegments] = useState<Segment[]>([]);
     const [currentTime, setCurrentTime] = useState(0);
-    const [currentSegment, setCurrentSegment] = useState<{text: string, tr: string} | null>(null);
+    const [currentSegment, setCurrentSegment] = useState<Segment | null>(null);
     const playerRef = useRef<HTMLVideoElement | null>(null);
     const [transcriptVisible, setTranscriptVisible] = useState(false);
 
@@ -20,6 +21,7 @@ export default function VideoWithSubs() {
 
         const fetchVideos = async () => {
             const data = await loadSingleVideo(decodeURIComponent(slug));
+            if (!data) return;
             setVideoToShow(data);
             setSegments(data.segments || []);
         }

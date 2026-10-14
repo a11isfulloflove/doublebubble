@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import "./ListOfVideos.css"
-import { generateNewSubtitles, loadVideos, deleteSingleVideo } from "../../api/generateNewSubtitles";
+import { generateNewSubtitles, loadVideos, deleteSingleVideo } from "@doublesub/shared";
+import type { VideoListItem } from "@doublesub/shared";
 import { loadingImage } from "../../assets/loadingImage";
 import { normalizeUrl, isValidUrl, ytLinkChecker } from '../../features/linkChecker';
 
-type Video = { slug: string, title: string, thumbnail_base64: string, status: string, link: string };
-
 export default function ListOfVideos() {
-    const [listOfVideos, setListOfVideos] = useState<Video[]>([])
+    const [listOfVideos, setListOfVideos] = useState<VideoListItem[]>([])
     const [urlSentByUser, setUrlSentByUser] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -30,7 +29,7 @@ export default function ListOfVideos() {
     }, []);
 
     function addNewVideo(urlToAdd: string) {
-        const newInfo: Video = {
+        const newInfo: VideoListItem = {
             slug: "",
             title: "VIDEO IS LOADING...",
             link: urlToAdd,
@@ -57,7 +56,10 @@ export default function ListOfVideos() {
         }
         addNewVideo(url);
         try {
-            await generateNewSubtitles(url);
+            const data = await generateNewSubtitles(url);
+            if (data.message) {
+                alert(data.message);
+            }
 
         } catch (err) {
             setListOfVideos((prevList) =>
@@ -72,7 +74,7 @@ export default function ListOfVideos() {
         }
     }
 
-    const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
+    const [videoToDelete, setVideoToDelete] = useState<VideoListItem | null>(null);
     async function deleteVideo(slug: string) {
         await deleteSingleVideo(slug)
         setListOfVideos((prevList) => prevList.filter(video => video.slug !== slug));
@@ -87,7 +89,7 @@ export default function ListOfVideos() {
                         <a className="header-main-text" href="/">{"🫧double더블🫧버블bubble🫧"}</a>
                     </div>
                 </div>
-                <div className="text-gray-500">Loading...</div>;
+                <div className="text-gray-500">Loading...</div>
             </div>
         );
     }
