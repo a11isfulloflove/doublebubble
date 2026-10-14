@@ -89,7 +89,7 @@ export default function ListOfVideos() {
                         <a className="header-main-text" href="/">{"🫧double더블🫧버블bubble🫧"}</a>
                     </div>
                 </div>
-                <div className="text-gray-500">Loading...</div>;
+                <div className="text-gray-500">Loading...</div>
             </div>
         );
     }
